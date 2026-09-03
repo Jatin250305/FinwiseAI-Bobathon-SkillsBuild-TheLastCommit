@@ -49,7 +49,7 @@ def upgrade() -> None:
             sa.Column("title", sa.String(length=300), nullable=False),
             sa.Column("message", sa.Text(), nullable=False),
             sa.Column("transaction_id", sa.String(), nullable=True),
-            sa.Column("is_read", sa.Boolean(), nullable=False, server_default="0"),
+            sa.Column("is_read", sa.Boolean(), nullable=False, server_default=sa.false()),
             sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
             sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
             sa.ForeignKeyConstraint(["transaction_id"], ["transactions.id"]),

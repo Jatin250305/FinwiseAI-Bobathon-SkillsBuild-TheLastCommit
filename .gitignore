@@ -38,3 +38,4 @@ dist/
 __pycache__/
 *.pyc
 .sf/
+.sf/

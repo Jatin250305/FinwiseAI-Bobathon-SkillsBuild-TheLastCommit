@@ -90,3 +90,4 @@ To connect to your FastAPI backend:
 | Muted | `#897A74` | Supporting text |
 # finwise-ai
 # finwise-ai
+# finwise-ai-Bobathon

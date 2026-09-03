@@ -89,3 +89,4 @@ To connect to your FastAPI backend:
 | Neutral | `#AC968E` | Card backgrounds |
 | Muted | `#897A74` | Supporting text |
 # finwise-ai
+# finwise-ai

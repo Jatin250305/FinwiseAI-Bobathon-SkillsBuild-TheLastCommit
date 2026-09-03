@@ -1,0 +1,11 @@
+from app.routers.auth import router as auth  # noqa
+from app.routers.transactions import router as transactions  # noqa
+from app.routers.budgets import router as budgets  # noqa
+from app.routers.goals import router as goals  # noqa
+from app.routers.loans import router as loans  # noqa
+from app.routers.income import router as income  # noqa
+from app.routers.analytics import router as analytics  # noqa
+from app.routers.affordability import router as affordability  # noqa
+from app.routers.scholarships import router as scholarships  # noqa
+from app.routers.financial_health import router as financial_health  # noqa
+from app.routers.ai import router as ai  # noqa

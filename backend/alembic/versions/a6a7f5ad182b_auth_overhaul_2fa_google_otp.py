@@ -35,10 +35,13 @@ def upgrade() -> None:
     op.create_index(op.f('ix_login_audit_logs_email'), 'login_audit_logs', ['email'], unique=False)
     op.create_index(op.f('ix_login_audit_logs_user_id'), 'login_audit_logs', ['user_id'], unique=False)
 
-    # ── password_reset_tokens: drop token, add otp_code + attempts ─────────────
+    # ── password_reset_tokens: drop token, add otp + purpose columns ──────────
     with op.batch_alter_table('password_reset_tokens', schema=None) as batch_op:
+        batch_op.add_column(sa.Column('purpose', sa.String(length=16), nullable=False, server_default='reset'))
         batch_op.add_column(sa.Column('otp_code', sa.String(length=6), nullable=False, server_default='000000'))
+        batch_op.add_column(sa.Column('otp_hash', sa.String(length=128), nullable=True))
         batch_op.add_column(sa.Column('attempts', sa.Integer(), nullable=False, server_default='0'))
+        batch_op.add_column(sa.Column('resend_after', sa.DateTime(timezone=True), nullable=True))
         batch_op.drop_index('ix_password_reset_tokens_token')
         batch_op.drop_column('token')
         batch_op.create_index(batch_op.f('ix_password_reset_tokens_user_id'), ['user_id'], unique=False)
@@ -48,11 +51,11 @@ def upgrade() -> None:
         batch_op.add_column(sa.Column('auth_provider', sa.String(length=20), nullable=False, server_default='local'))
         batch_op.add_column(sa.Column('google_id', sa.String(length=128), nullable=True))
         batch_op.add_column(sa.Column('avatar_url', sa.String(length=512), nullable=True))
-        batch_op.add_column(sa.Column('email_verified', sa.Boolean(), nullable=False, server_default='0'))
+        batch_op.add_column(sa.Column('email_verified', sa.Boolean(), nullable=False, server_default=sa.false()))
         batch_op.add_column(sa.Column('email_verify_token', sa.String(length=128), nullable=True))
         batch_op.add_column(sa.Column('email_verify_token_expiry', sa.DateTime(timezone=True), nullable=True))
         batch_op.add_column(sa.Column('totp_secret', sa.String(length=256), nullable=True))
-        batch_op.add_column(sa.Column('totp_enabled', sa.Boolean(), nullable=False, server_default='0'))
+        batch_op.add_column(sa.Column('totp_enabled', sa.Boolean(), nullable=False, server_default=sa.false()))
         batch_op.add_column(sa.Column('failed_login_attempts', sa.Integer(), nullable=False, server_default='0'))
         batch_op.add_column(sa.Column('locked_until', sa.DateTime(timezone=True), nullable=True))
         batch_op.add_column(sa.Column('token_version', sa.Integer(), nullable=False, server_default='0'))
@@ -60,8 +63,8 @@ def upgrade() -> None:
         batch_op.create_index(batch_op.f('ix_users_email_verify_token'), ['email_verify_token'], unique=False)
         batch_op.create_index(batch_op.f('ix_users_google_id'), ['google_id'], unique=True)
 
-    # Grandfather existing users — they pre-date email verification
-    op.execute("UPDATE users SET email_verified = 1 WHERE email_verified = 0")
+    # Grandfather existing users — they pre-date email verification, mark all as verified
+    op.execute("UPDATE users SET email_verified = TRUE WHERE email_verified = FALSE")
 
 
 def downgrade() -> None:

@@ -88,7 +88,13 @@ To connect to your FastAPI backend:
 | Secondary | `#AB776B` | Hover states |
 | Neutral | `#AC968E` | Card backgrounds |
 | Muted | `#897A74` | Supporting text |
-# finwise-ai
-# finwise-ai
-# finwise-ai-Bobathon
-# finwise-ai
+
+---
+
+## Contributors
+
+- [@jatinkancharla-web](https://github.com/jatinkancharla-web)
+- [@Eesha5115](https://github.com/Eesha5115)
+- [@Prakrutee](https://github.com/Prakrutee)
+- [@DudiDeepak](https://github.com/DudiDeepak)
+- [@krithika183](https://github.com/krithika183)

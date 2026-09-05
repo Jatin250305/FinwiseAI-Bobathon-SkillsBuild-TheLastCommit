@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Eye, EyeOff, Loader2, AlertCircle, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { GoogleLogin } from '@react-oauth/google';
 import AuthLayout from '@/layouts/AuthLayout';
 import { authService } from '@/services/authService';
 import { useAuthStore } from '@/store/authStore';
@@ -56,6 +57,23 @@ export default function LoginPage() {
     } catch (err: any) {
       setFailedAttempts((n) => n + 1);
       setAuthError('Invalid email or password.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    if (!credentialResponse.credential) return;
+    setLoading(true);
+    setAuthError('');
+    try {
+      const result = await authService.googleAuth(credentialResponse.credential);
+      setFailedAttempts(0);
+      setAuth(result.user, result.token);
+      toast.success(`Welcome back, ${result.user.name.split(' ')[0]}!`);
+      navigate('/dashboard', { replace: true });
+    } catch (err: any) {
+      setAuthError(err.message || 'Google sign-in failed');
     } finally {
       setLoading(false);
     }
@@ -144,6 +162,20 @@ export default function LoginPage() {
           ) : 'Sign in'}
         </button>
       </form>
+
+      <div className="mt-6 flex items-center gap-4">
+        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-800"></div>
+        <span className="text-sm text-gray-400">or</span>
+        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-800"></div>
+      </div>
+
+      <div className="mt-6 flex justify-center">
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={() => setAuthError('Google sign-in failed')}
+          useOneTap
+        />
+      </div>
 
       <p className="text-center text-sm text-[#9CA3AF] mt-6">
         Don't have an account?{' '}

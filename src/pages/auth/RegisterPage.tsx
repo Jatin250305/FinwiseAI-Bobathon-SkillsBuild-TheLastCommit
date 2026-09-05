@@ -5,8 +5,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
+import toast from 'react-hot-toast';
 import AuthLayout from '@/layouts/AuthLayout';
 import { authService } from '@/services/authService';
+import { useAuthStore } from '@/store/authStore';
 
 // ── Password strength ─────────────────────────────────────────────────────────
 type StrengthLevel = 0 | 1 | 2 | 3 | 4;
@@ -74,6 +77,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const setAuth = useAuthStore((s) => s.setAuth);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -91,6 +95,22 @@ export default function RegisterPage() {
 
   // Live mismatch: show only once the confirm field has content
   const confirmMismatch = confirmValue.length > 0 && passwordValue !== confirmValue && !errors.confirmPassword;
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    if (!credentialResponse.credential) return;
+    setLoading(true);
+    setError('');
+    try {
+      const result = await authService.googleAuth(credentialResponse.credential);
+      setAuth(result.user, result.token);
+      toast.success(`Welcome, ${result.user.name.split(' ')[0]}!`);
+      navigate('/dashboard', { replace: true });
+    } catch (err: any) {
+      setError(err.message || 'Google sign-up failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onSubmit = async (data: RegisterFormValues) => {
     setLoading(true);
@@ -213,6 +233,20 @@ export default function RegisterPage() {
           ) : 'Create account'}
         </button>
       </form>
+
+      <div className="mt-6 flex items-center gap-4">
+        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-800"></div>
+        <span className="text-sm text-gray-400">or</span>
+        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-800"></div>
+      </div>
+
+      <div className="mt-6 flex justify-center">
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={() => setError('Google sign-up failed')}
+          useOneTap
+        />
+      </div>
 
       <p className="text-center text-sm text-[#9CA3AF] mt-6">
         Already have an account?{' '}

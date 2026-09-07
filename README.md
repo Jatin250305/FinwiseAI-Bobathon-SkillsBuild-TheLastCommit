@@ -2,63 +2,86 @@
 
 **AI-Powered Financial Copilot & Decision-Support Platform for Students**
 
-FinWise AI is a comprehensive, AI-powered financial management ecosystem designed specifically for students and young adults. It bridges the financial literacy gap by providing real-time analytics, dynamic budgeting tools, loan application features, and personalized AI-driven financial insights.
+FinWise AI is a comprehensive, AI-driven financial management ecosystem designed specifically for students and young adults. It bridges the financial literacy gap by providing real-time analytics, dynamic budgeting tools, loan application pipelines, and personalized AI-driven financial insights.
 
 ---
 
 ## 🎯 The Financial Safety Principle
 
 > **The frontend never independently calculates authoritative financial values.**
-> Every EMI, interest rate, affordability score, and financial health score is strictly calculated by the FastAPI backend using standard reducing-balance math and secure database transactions. The React frontend exists purely to display data beautifully, while the AI exists to explain it contextually.
+> Every EMI, interest rate, affordability score, and financial health metric is strictly calculated by the FastAPI backend using standard reducing-balance math and secure database transactions. The React frontend exists purely to display data beautifully, while the AI exists to explain it contextually.
 
 ---
 
-## ✨ Features & Implementation Details
+## 📱 Deep Dive: Platform Pages & Features
 
-### 1. Authentication & Security
-* **What it does:** Secure entry point supporting traditional email/password and Google OAuth login.
-* **Tech Stack:** React Hook Form + Zod (frontend validation), `@react-oauth/google`, FastAPI, JWT (JSON Web Tokens), `passlib` (bcrypt hashing).
-* **Working:** Validates input securely, verifies via PostgreSQL, and issues a JWT token. The token is stored locally via **Zustand** and attached to all subsequent Axios requests.
+### 1. Authentication & Security (`LoginPage.tsx` & `RegisterPage.tsx`)
+* **Features:** Secure entry point supporting traditional email/password and modern Google OAuth login.
+* **Development & Tech Stack:** Frontend uses **React Hook Form** paired with **Zod** for strict input validation, and `@react-oauth/google`. The backend uses **FastAPI**, **passlib** (for bcrypt hashing), and **JWT** (JSON Web Tokens).
+* **Real-World Working:** When a user logs in, the backend verifies credentials against a **PostgreSQL** database and issues a JWT token. The frontend stores this token globally using **Zustand** and automatically attaches it to all future Axios requests.
+* **Student Benefit:** Guarantees that sensitive financial data is locked behind enterprise-grade security protocols, giving students peace of mind.
 
-### 2. Dashboard & Data Aggregation
-* **What it does:** A unified command center showing wallet balance, monthly income/expenses, and quick charts.
-* **Tech Stack:** **TanStack React Query** (data fetching/caching) and **Recharts** (SVG charts).
-* **Working:** Fetches data from multiple backend endpoints in parallel. React Query caches this data to prevent UI freezing, seamlessly updating the charts as you navigate.
+### 2. The Financial Dashboard (`DashboardPage.tsx`)
+* **Features:** A unified command center showing wallet balance, monthly income, expenses, surplus, and quick spending charts.
+* **Development & Tech Stack:** Built with **React** and **Tailwind CSS**. Relies heavily on **TanStack React Query** for server-state caching and **Recharts** for SVG data visualization.
+* **Real-World Working:** Fetches data from multiple FastAPI endpoints in parallel. React Query caches this data locally so the UI renders instantly on return visits, seamlessly syncing in the background.
+* **Student Benefit:** Traditional banking apps are often confusing and cluttered. This single pane of glass provides an immediate, stress-free snapshot of their exact financial standing.
 
-### 3. Transactions & Income (ACID Compliant)
-* **What it does:** Users manually log expenses, deposits, and scholarships.
-* **Tech Stack:** FastAPI, SQLAlchemy, PostgreSQL.
-* **Working:** When a transaction is logged, the backend opens an **ACID transaction**. It adds the transaction row and deducts/adds to the user's `Wallet` table simultaneously. If one fails, both roll back, guaranteeing mathematical perfection.
+### 3. Transactions & Income (`TransactionsPage.tsx` & `IncomePage.tsx`)
+* **Features:** A digital ledger for logging daily expenses, paycheck deposits, and scholarships.
+* **Development & Tech Stack:** Frontend forms pass strict Zod validation before hitting the backend's **SQLAlchemy** ORM.
+* **Real-World Working:** This uses **ACID-compliant database transactions**. When a user logs a $50 expense, the backend simultaneously inserts the transaction row and deducts $50 from the user's overall Wallet table. If the wallet update fails, the entire request rolls back.
+* **Student Benefit:** Teaches students the vital habit of accounting for every dollar, ensuring their digital wallet balance is mathematically flawless.
 
-### 4. Dynamic Budgets
-* **What it does:** Sets and tracks maximum monthly limits for categories like 'Food' or 'Transport'.
-* **Tech Stack:** Tailwind CSS (dynamic widths), Python (aggregation).
-* **Working:** The backend scans the current month's transactions, filters by category, and divides by the budget limit. The frontend turns this percentage into dynamic Tailwind progress bars (e.g., `w-[75%]`).
+### 4. Dynamic Budgets (`BudgetPage.tsx`)
+* **Features:** Allows users to set maximum monthly spending limits for specific categories (e.g., 'Food', 'Transport').
+* **Development & Tech Stack:** The Python backend handles aggregation logic, while the frontend utilizes dynamic **Tailwind CSS** utility classes (e.g., `w-[75%]`).
+* **Real-World Working:** The backend scans the current month's transactions, filters by category, sums the totals, and divides by the budget limit. The frontend translates this into a dynamic, color-coded progress bar.
+* **Student Benefit:** Visually warns students *before* they overspend, teaching proactive financial restraint rather than reactive regret.
 
-### 5. Educational Loan System
-* **What it does:** A dual-sided system where students apply for loans, and Bank Officers approve/reject them.
-* **Tech Stack:** Python (strict financial math).
-* **Working:** Enforcing our Safety Principle, the Python backend calculates the exact Amortization schedule and compound interest (`EMI = P × r × (1+r)^n / ((1+r)^n - 1)`).
+### 5. Savings Goals (`SavingsGoalsPage.tsx`)
+* **Features:** Gamifies the process of saving for large purchases (e.g., a new laptop or textbook).
+* **Development & Tech Stack:** Uses custom SVG components (calculating `stroke-dashoffset`) connected to global **Zustand** state.
+* **Real-World Working:** As the user logs a 'savings' transaction, the PostgreSQL database updates the goal's `current_amount`. The UI reacts instantly, filling up a visual ring chart.
+* **Student Benefit:** Transforms saving money from a boring chore into an engaging, visually rewarding milestone system.
 
-### 6. Affordability Calculator
-* **What it does:** Tells the user if they can safely afford a large purchase (like a phone).
-* **Working:** Subtracts active loan EMIs, fixed expenses, and savings goal contributions from the user's monthly income to find their true *Disposable Income*. If the item consumes > 50%, it issues a warning.
+### 6. Educational Loan System (`LoanApplicationPage.tsx` & `BankReviewPage.tsx`)
+* **Features:** A dual-sided pipeline where students apply for educational loans and a 'Bank Officer' persona reviews, approves, or rejects them.
+* **Development & Tech Stack:** Strict architectural separation. The React frontend solely collects data. The Python backend handles all mathematical evaluations in `finance.py`.
+* **Real-World Working:** The backend calculates the exact Amortization schedule and compound interest using the formula: `EMI = P × r × (1+r)^n / ((1+r)^n - 1)`. 
+* **Student Benefit:** Simulates the real-world borrowing process in a safe environment, teaching students how interest rates and loan tenures directly impact their monthly EMIs.
 
-### 7. Financial Health Score (The 61.2 Algorithm)
-* **What it does:** Grades users out of 100 on 6 financial metrics (Savings Rate, Budget Adherence, Debt Burden, Spending Stability, Goal Progress, Emergency Reserve).
-* **Working:** This is a live mathematical algorithm. For example, a completely blank new account defaults to **61.2**. This happens because neutral scores (like perfect 0 debt = 20pts, 0 budgets exceeded = 20pts) evaluate to exactly `61.25`. Python 3 uses *Banker's Rounding*, cleanly rendering it as `61.2`. The moment a user logs a transaction, the score recalculates.
+### 7. Affordability Calculator (`AffordabilityPage.tsx`)
+* **Features:** A proactive tool that tells the user if they can safely afford a specific large purchase.
+* **Development & Tech Stack:** Python-based mathematical evaluation hitting the `affordability.py` router.
+* **Real-World Working:** The algorithm subtracts the student's active loan EMIs, fixed expenses, and savings goal contributions from their monthly income to find their true *Disposable Income*. If the desired item consumes more than 50% of this disposable income, it triggers a UI warning.
+* **Student Benefit:** Prevents impulse buying by forcing students to confront their actual disposable income versus their gross income.
 
-### 8. AI Copilot
-* **What it does:** A personalized financial advisor.
-* **Working:** We securely serialize the user's real backend data (their wallet balance, active loans, and exact budget deficits) and inject it into the System Prompt of a Large Language Model. This grounds the AI in reality, allowing it to give hyper-personalized, mathematically accurate advice.
+### 8. Financial Health Score (`FinancialHealthPage.tsx`)
+* **Features:** A credit-score-like metric out of 100, visually represented by a 6-axis Radar Chart.
+* **Development & Tech Stack:** Visualized via **Recharts**. Graded by a highly complex Python algorithm.
+* **Real-World Working:** The algorithm evaluates 6 metrics: Savings Rate, Budget Adherence, Debt Burden, Spending Stability, Goal Progress, and Emergency Reserves. 
+  *(Technical note: A brand new account evaluates to exactly `61.25` based on neutral default weights. Because Python 3 uses IEEE 754 'Banker's Rounding'—rounding .5 to the nearest even number—the frontend perfectly displays `61.2` until the user logs their first transaction).*
+* **Student Benefit:** Gives students a singular, gamified metric to improve over time, making holistic financial health easy to understand.
+
+### 9. AI Copilot (`AIBotPage.tsx`)
+* **Features:** A highly personalized, conversational financial advisor.
+* **Development & Tech Stack:** Integrates a Large Language Model (LLM) API directly into the FastAPI backend.
+* **Real-World Working:** Unlike generic chatbots, our backend serializes the user's *actual* PostgreSQL data (wallet balance, exact budget deficits, active loans) and securely injects it into the LLM's System Prompt. 
+* **Student Benefit:** Instead of generic advice like "save more money", the AI provides hyper-specific, actionable intelligence like "You need to cut your food budget by $30 this week to afford your upcoming laptop goal."
+
+### 10. Reports & Analytics (`ReportsPage.tsx`)
+* **Features:** Deep-dive historical data viewing and CSV exporting.
+* **Development & Tech Stack:** Standard React tables and browser-based CSV Blob generation.
+* **Student Benefit:** Teaches students how to read and maintain formal financial ledgers for tax or auditing purposes.
 
 ---
 
-## 🛠 Tech Stack
+## 🛠 Tech Stack Overview
 
 ### Frontend (Client-Side)
 * **Framework:** React 18 + Vite (TypeScript)
-* **State Management:** Zustand (Global) + TanStack React Query (Server)
+* **State Management:** Zustand (Global State) + TanStack React Query (Server State)
 * **Routing:** React Router v6
 * **UI & Styling:** Tailwind CSS, Lucide React (Icons)
 * **Data Visualization:** Recharts
@@ -69,7 +92,7 @@ FinWise AI is a comprehensive, AI-powered financial management ecosystem designe
 * **Database:** PostgreSQL
 * **ORM & Migrations:** SQLAlchemy + Alembic
 * **Authentication:** JWT, passlib, Google OAuth2
-* **Infrastructure:** Docker (`docker-compose`)
+* **Infrastructure:** Docker (`docker-compose.yml`)
 
 ---
 

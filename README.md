@@ -141,3 +141,18 @@ Use these credentials to explore the different user personas:
 - [@Prakrutee](https://github.com/Prakrutee)
 - [@DudiDeepak](https://github.com/DudiDeepak)
 - [@krithika183](https://github.com/krithika183)
+
+---
+
+## 🤖 IBM Bob Technology Integration
+
+IBM Bob was utilized as the central cognitive engine and development accelerator for the FinWise AI platform, fundamentally shaping both the architecture and the core user experience.
+
+### 1. The AI Copilot (Core Feature Integration)
+The most prominent implementation of IBM Bob is within the platform's **AI Copilot** feature (`AIBotPage.tsx` and `ai.py`). Standard financial apps provide numbers without context; IBM Bob acts as the contextual bridge. When a student asks a question like *"Why is my financial health score failing?"*, the FastAPI backend securely serializes the user's actual PostgreSQL data—including their proprietary 6-axis Financial Health Score, wallet balance, and active budget deficits. This raw data is injected into the System Prompt of the IBM Bob LLM endpoint. Because IBM Bob processes this highly contextual prompt, it generates personalized, mathematically accurate advice (e.g., *"You must reduce your Food budget by $30 to comfortably afford your upcoming EMI"*). IBM Bob transforms static database rows into an interactive, educational dialogue.
+
+### 2. Algorithm Generation & Validation
+Behind the scenes, IBM Bob technology was heavily utilized during the development phase to architect and validate our complex financial algorithms. Developing accurate, edge-case resilient formulas for reducing-balance EMIs, compound interest calculations, and the weighted 100-point Financial Health Score required immense precision. IBM Bob assisted in generating the core Python mathematical models in `finance.py`, specifically accounting for standard financial rules like "Banker’s Rounding" (IEEE 754), ensuring that the backend logic is enterprise-grade and mathematically sound.
+
+### 3. Workflow Optimization
+We integrated IBM Bob into our development workflow to streamline the decoupling of our architecture. By acting as a technical co-pilot, IBM Bob guided the strict separation of concerns—ensuring the React frontend strictly handled state management and UI caching, while the FastAPI backend handled all secure database transactions (ACID compliance) and auth token generation. This allowed us to build a robust, scalable product at hackathon speed without compromising on security or code quality.
